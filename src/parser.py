@@ -2,12 +2,16 @@ import sys
 from collections import defaultdict
 
 class FlowLogParser:
-    def __init__(self, input_file, output_file, lookup_file):
+    DEFAULT_INPUT_FILE = './static/sample_flow_logs.txt'
+    DEFAULT_OUTPUT_FILE = './static/output.txt'
+    DEFAULT_LOOKUP_FILE = './static/lookup.csv'
+    PROTOCOL_MAP = {'icmp': 1, 'tcp': 6, 'udp': 17} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+
+    def __init__(self, input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, lookup_file=DEFAULT_LOOKUP_FILE):
         self.input_file = input_file
         self.output_file = output_file
         self.lookup_file = lookup_file
         self.lookup_table = {}
-        self.protocol_map = {'icmp': 1, 'tcp': 6, 'udp': 17} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
         self.tag_counts = defaultdict(int)
         self.port_protocol_counts = defaultdict(int)
 
@@ -25,7 +29,7 @@ class FlowLogParser:
         with self.read_file(self.lookup_file) as f:
             for line in f:
                 dstport, protocol, tag = line.strip().split(',')
-                self.lookup_table[(int(dstport), self.protocol_map[protocol])] = tag
+                self.lookup_table[(int(dstport), self.PROTOCOL_MAP[protocol])] = tag
 
     def parse(self):
         """
@@ -45,7 +49,7 @@ class FlowLogParser:
                 self.port_protocol_counts[key] += 1
         
     def store_output(self):
-        inv_protocol_map = dict((v, k) for k, v in self.protocol_map.items())
+        inv_protocol_map = dict((v, k) for k, v in self.PROTOCOL_MAP.items())
 
         try:
             with open(self.output_file, 'w') as f:
