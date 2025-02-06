@@ -5,7 +5,7 @@ class FlowLogParser:
     DEFAULT_INPUT_FILE = './static/sample_flow_logs.txt'
     DEFAULT_OUTPUT_FILE = './static/output.txt'
     DEFAULT_LOOKUP_FILE = './static/lookup.csv'
-    PROTOCOL_MAP = {'icmp': 1, 'tcp': 6, 'udp': 17} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+    PROTOCOL_MAP = {1: 'icmp', 6: 'tcp', 17: 'udp'} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 
     def __init__(self, input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, lookup_file=DEFAULT_LOOKUP_FILE):
         self.input_file = input_file
@@ -29,7 +29,7 @@ class FlowLogParser:
         with self.read_file(self.lookup_file) as f:
             for line in f:
                 dstport, protocol, tag = line.strip().split(',')
-                self.lookup_table[(int(dstport), self.PROTOCOL_MAP[protocol])] = tag
+                self.lookup_table[(int(dstport), protocol.lower())] = tag
 
     def parse(self):
         """
@@ -41,7 +41,7 @@ class FlowLogParser:
             for line in f:
                 fields = line.strip().split(' ')
                 dstport, protocol = int(fields[6]), int(fields[7])
-                key = (dstport, protocol)
+                key = (dstport, self.PROTOCOL_MAP[protocol])
 
                 tag = self.lookup_table.get(key, "Untagged")
 
@@ -49,21 +49,18 @@ class FlowLogParser:
                 self.port_protocol_counts[key] += 1
         
     def store_output(self):
-        inv_protocol_map = dict((v, k) for k, v in self.PROTOCOL_MAP.items())
-
         try:
             with open(self.output_file, 'w') as f:
                 f.write("Count of Matches for Each Tag\n\n")
                 f.write("Tag, Count\n\n")
                 for tag, count in self.tag_counts.items():
                     f.write(f"{tag}, {count}\n")
-
                 f.write("\n\n")
                 f.write("Count of Matches for Each Port/Protocol Combination\n\n")
                 f.write("Port, Protocol, Count\n\n")
                 for key, count in self.port_protocol_counts.items():
                     port, protocol = key
-                    f.write(f"{port}, {inv_protocol_map[protocol]}, {count}\n")
+                    f.write(f"{port}, {protocol}, {count}\n")  # Use the flipped map
         except IOError as e:
             raise IOError(f"Error: Could not write to the output file '{self.output_file}': {e}")
 

@@ -12,11 +12,11 @@ class TestFlowLogParser(unittest.TestCase):
     def test_initialize(self):
         self.parser.initialize()
 
-        self.assertIn((25, 6), self.parser.lookup_table.keys())
-        self.assertIn((68, 17), self.parser.lookup_table.keys())
+        self.assertIn((25, 'tcp'), self.parser.lookup_table.keys())
+        self.assertIn((68, 'udp'), self.parser.lookup_table.keys())
 
-        self.assertEqual(self.parser.lookup_table[(25, 6)], 'sv_P1')
-        self.assertEqual(self.parser.lookup_table[(68, 17)], 'sv_P2')
+        self.assertEqual(self.parser.lookup_table[(25, 'tcp')], 'sv_P1')
+        self.assertEqual(self.parser.lookup_table[(68, 'udp')], 'sv_P2')
     
     def test_initialize_file_not_found(self):
         lookup_file = './static/missing_file.txt'
@@ -37,8 +37,8 @@ class TestFlowLogParser(unittest.TestCase):
         self.assertEqual(tag_counts['sv_P2'], 1)
         self.assertEqual(tag_counts['email'], 3)
         self.assertEqual(tag_counts['test'], 0)
-        self.assertEqual(port_protocol_counts[(25, 6)], 1)
-        self.assertEqual(port_protocol_counts[(68, 17)], 0) # not present in sample flow logs
+        self.assertEqual(port_protocol_counts[(25, 'tcp')], 1)
+        self.assertEqual(port_protocol_counts[(68, 'udp')], 0) # not present in sample flow logs
 
     def test_parse_file_not_found(self):
         lookup_file = './static/lookup.csv'
@@ -72,7 +72,7 @@ class TestFlowLogParser(unittest.TestCase):
     
     def test_store_output_write_error(self):
         self.parser.tag_counts = {'sv_P1': 2}
-        self.parser.port_protocol_counts = {(25, 6): 2}
+        self.parser.port_protocol_counts = {(25, 'tcp'): 2}
         
         with patch('builtins.open', new_callable=mock_open) as mock_file:
             mock_file.side_effect = IOError("File write error")
