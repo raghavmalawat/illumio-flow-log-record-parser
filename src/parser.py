@@ -11,19 +11,21 @@ class FlowLogParser:
         self.tag_counts = defaultdict(int)
         self.port_protocol_counts = defaultdict(int)
 
+    def read_file(self, file_path):
+        """Utility function to read a file and handle errors."""
+        try:
+            return open(file_path, 'r')
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Error: The file '{file_path}' was not found.")
+
     def initialize(self):
         """
         Populate lookup table (Lookup Table Format: (dstport, protocol, tag))
         """
-        try:
-            with open(self.lookup_file, 'r') as f:
-                for line in f:
-                    dstport, protocol, tag  = line.strip().split(',')
-                    self.lookup_table[(int(dstport), self.protocol_map[protocol])] = tag
-        except FileNotFoundError as e:
-            error_message = f"Error: The lookup file '{self.lookup_file}' was not found."
-            raise FileNotFoundError(error_message) from e
-
+        with self.read_file(self.lookup_file) as f:
+            for line in f:
+                dstport, protocol, tag = line.strip().split(',')
+                self.lookup_table[(int(dstport), self.protocol_map[protocol])] = tag
 
     def parse(self):
         """
@@ -31,20 +33,16 @@ class FlowLogParser:
         1. Count of Matches for Each Tag
         2. Count of Matches for Each Port/Protocol Combination
         """
-        try:
-            with open(self.input_file, 'r') as f:
-                for line in f:
-                    fields = line.strip().split(' ')
-                    dstport, protocol = int(fields[6]), int(fields[7])
-                    key = (dstport, protocol)
+        with self.read_file(self.input_file) as f:
+            for line in f:
+                fields = line.strip().split(' ')
+                dstport, protocol = int(fields[6]), int(fields[7])
+                key = (dstport, protocol)
 
-                    tag = self.lookup_table.get(key, "Untagged")
+                tag = self.lookup_table.get(key, "Untagged")
 
-                    self.tag_counts[tag] += 1
-                    self.port_protocol_counts[key] += 1
-        except FileNotFoundError as e:
-            error_message = f"Error: The input file '{self.input_file}' was not found."
-            raise FileNotFoundError(error_message) from e
+                self.tag_counts[tag] += 1
+                self.port_protocol_counts[key] += 1
         
     def store_output(self):
         inv_protocol_map = dict((v, k) for k, v in self.protocol_map.items())
@@ -63,8 +61,7 @@ class FlowLogParser:
                     port, protocol = key
                     f.write(f"{port}, {inv_protocol_map[protocol]}, {count}\n")
         except IOError as e:
-            error_message = f"Error: Could not write to the output file '{self.output_file}': {e}"
-            raise IOError(error_message) from e
+            raise IOError(f"Error: Could not write to the output file '{self.output_file}': {e}")
 
 if __name__ == '__main__':
     try:

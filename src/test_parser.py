@@ -23,7 +23,7 @@ class TestFlowLogParser(unittest.TestCase):
         parser = FlowLogParser('', '', lookup_file)
         with self.assertRaises(FileNotFoundError) as context:
             parser.initialize()
-        self.assertEqual(str(context.exception), f"Error: The lookup file '{lookup_file}' was not found.")
+        self.assertEqual(str(context.exception), f"Error: The file '{lookup_file}' was not found.")
 
 
     def test_parse(self):
@@ -49,7 +49,7 @@ class TestFlowLogParser(unittest.TestCase):
             parser.initialize()
             parser.parse()
         
-        self.assertEqual(str(context.exception), f"Error: The input file '{parser.input_file}' was not found.")
+        self.assertEqual(str(context.exception), f"Error: The file '{parser.input_file}' was not found.")
 
     def test_store_output(self):
         self.parser.initialize()
