@@ -6,8 +6,9 @@ class FlowLogParser:
         self.output_file = './output.txt'
         self.lookup_file = './static/lookup.csv'
         self.lookup_table = {}
-        self.sample_flow_logs = []
         self.protocol_map = {'icmp': 1, 'tcp': 6, 'udp': 17} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+        self.tag_counts = defaultdict(int)
+        self.port_protocol_counts = defaultdict(int)
 
     def initialize(self):
         """
@@ -26,9 +27,6 @@ class FlowLogParser:
         2. Count of Matches for Each Port/Protocol Combination
         """
 
-        tag_counts = defaultdict(int)
-        port_protocol_counts = defaultdict(int)
-
         with open(self.input_file, 'r') as f:
             for line in f:
                 fields = line.strip().split(' ')
@@ -37,17 +35,31 @@ class FlowLogParser:
 
                 tag = self.lookup_table.get(key, "Untagged")
 
-                tag_counts[tag] += 1
-                port_protocol_counts[key] += 1
+                self.tag_counts[tag] += 1
+                self.port_protocol_counts[key] += 1
         
-        return tag_counts, port_protocol_counts
+    def store_output(self):
+        inv_protocol_map = dict((v, k) for k, v in self.protocol_map.items())
+
+        with open(self.output_file, 'w') as f:
+            f.write("Count of Matches for Each Tag\n\n")
+            f.write("Tag, Count\n\n")
+            for tag, count in self.tag_counts.items():
+                f.write(f"{tag}, {count}\n")
+
+            f.write("\n\n")
+            f.write("Count of Matches for Each Port/Protocol Combination\n\n")
+            f.write("Port, Protocol, Count\n\n")
+            for key, count in self.port_protocol_counts.items():
+                port, protocol = key
+                f.write(f"{port}, {inv_protocol_map[protocol]}, {count}\n")
 
 
 if __name__ == '__main__':
     parser = FlowLogParser()
 
     parser.initialize()
-    tag_counts, port_protocol_counts = parser.parse()
+    parser.parse()
 
-    # parser.store_output()
+    parser.store_output()
     
