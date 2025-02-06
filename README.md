@@ -11,12 +11,13 @@ When you create a flow log, you can use the [default format](https://docs.aws.am
 For more information, [check](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html) this out
 
 
-### Description 
+### Task 
 
 Write a program that can parse a file containing [flow log data](./static/sample_flow_logs.txt) and maps each row to a `tag` based on a [lookup table](./static/lookup_table.csv) (The `dstport` and `protocol` combination decide what `tag` can be applied)
 
 ### Installation
-- Download and install the necessary requirements 
+- Git clone the repo
+- Go to source directory and run the parser as suggested below
     ```
     $ python3 src/parser.py             # to use the default input file ./static/sample_flow_logs.txt
     
@@ -25,6 +26,8 @@ Write a program that can parse a file containing [flow log data](./static/sample
     
     $ python3 src/test_parser.py        # to run the tests
     ```
+- The output can be found in the `./static/output.txt` file
+- In order to update inputs, either create a new file and pass it as an argument while running the parser or update the existing default file (`./static/sample_flow_logs.txt`)
 
 ### Testing
 1. Unit tests (Followed Test Driven Development)
@@ -60,13 +63,19 @@ Write a program that can parse a file containing [flow log data](./static/sample
 
 ### Analysis
 Next set of features that can be added:
-1. Pass input, output files as arguments via terminal
-2. Add support for custom flow log format
-3. Build a simple UI using Streamlit
+
+1. Error Handling (Files I/O, Unmacthed Protocols, Tags, etc)
+2. Better logging for debugging
+3. Pass input, output files as arguments via terminal
+4. Add all protocol numbers to the map instead of hard coding (https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml)
+5. Add support for custom flow log format
+6. Build a simple UI using Streamlit
+7. Using Locust to load test for the below constraints
 
 ### Assumptions
-1. The flow logs are of deafult type and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields)
-2. This parser is not supported for custom flow log format
+1. The flow logs are of deafult type (v2) and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields`
+2. The input file has only the `{'icmp': 1, 'tcp': 6, 'udp': 17}` protocols
+3. This parser is not supported for custom flow log format
 
 ### Constraints
 
