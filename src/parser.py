@@ -4,7 +4,7 @@ from collections import defaultdict
 class FlowLogParser:
     PROTOCOL_MAP = {1: 'icmp', 6: 'tcp', 17: 'udp'} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 
-    def __init__(self, input_file,output_file, lookup_file):
+    def __init__(self, input_file,output_file, lookup_file, log_skipped=True):
         """
         Initializes the FlowLogParser with the specified input, output, and lookup files.
 
@@ -19,6 +19,7 @@ class FlowLogParser:
         self.lookup_table = {}
         self.tag_counts = defaultdict(int)
         self.port_protocol_counts = defaultdict(int)
+        self.log_skipped = log_skipped
 
     def read_file(self, file_path):
         """
@@ -66,7 +67,8 @@ class FlowLogParser:
                 fields = line.strip().split(' ')
 
                 if len(fields) < 14:
-                    print(f"Skipping line {line_number}: The log doesn't follow flow logs deafult type format (v2)")
+                    if self.log_skipped:
+                        print(f"Skipping line {line_number}: The log doesn't follow flow logs deafult type format (v2)")
                     self.tag_counts["skipped"] += 1
                     continue
                 
@@ -74,7 +76,8 @@ class FlowLogParser:
                 protocol_code = int(fields[7])
 
                 if protocol_code not in self.PROTOCOL_MAP.keys():
-                    print(f"Skipping line {line_number}: The protocol code '{protocol_code}' is not valid")
+                    if self.log_skipped:
+                        print(f"Skipping line {line_number}: The protocol code '{protocol_code}' is not valid")
                     self.tag_counts["skipped"] += 1
                     continue
 
@@ -110,7 +113,7 @@ class FlowLogParser:
 if __name__ == '__main__':
     try:
         input_file = sys.argv[1] if len(sys.argv) > 1 else './static/sample_flow_logs.txt'
-        output_file = './static/output.txt'
+        output_file = sys.argv[2] if len(sys.argv) > 1 else './static/output.txt'
         lookup_file = './static/lookup.csv'
 
         parser = FlowLogParser(input_file, output_file, lookup_file)

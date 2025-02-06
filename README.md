@@ -21,8 +21,9 @@ Write a program that can parse a file containing [flow log data](./static/sample
     ```
     $ python3 src/parser.py             # to use the default input file ./static/sample_flow_logs.txt
     
-    # to use the input file ./static/sample_flow_logs.txt
-    $ python3 src/parser.py ./static/sample_flow_logs.txt 
+    # For custom file locations
+    $ python3 src/parser.py "$INPUT_FILE" "$OUTPUT_FILE"
+
     
     $ python3 src/test_parser.py        # to run the tests
     ```
@@ -62,15 +63,25 @@ Write a program that can parse a file containing [flow log data](./static/sample
 
 
 ### Analysis
-Next set of features that can be added:
 
-1. Error Handling (Files I/O, Unmacthed Protocols, Tags, etc)
-2. Better logging for debugging
-3. Pass input, output files as arguments via terminal
-4. Add all protocol numbers to the map instead of hard coding (https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml)
-5. Add support for custom flow log format
-6. Build a simple UI using Streamlit
-7. Using Locust to load test for the below constraints
+##### Performance Analysis
+```
+# Modify the input and output files in performance_test.py
+
+$ python3 performance_test.py
+```
+| File Size  | No. of entries | Time taken |
+|---------|---------|----------------------|
+| 9.5 MB  | 90036   | 61.7 milliseconds  |
+| 1 KB    | 14      | 0.42 milliseconds    |
+
+##### Next set of features that can be added:
+
+1. Better logging for debugging
+2. Pass input, output files as arguments via terminal
+3. Add all protocol numbers to the map instead of hard coding (https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml)
+4. Add support for custom flow log format
+5. Build a simple UI using Streamlit
 
 ### Assumptions
 1. The flow logs are of deafult type (v2) and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields`

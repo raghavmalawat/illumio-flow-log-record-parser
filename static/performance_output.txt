@@ -1,0 +1,27 @@
+Count of Matches for Each Tag
+
+Tag, Count
+
+skipped, 12924
+untagged, 44982
+sv_P2, 6426
+sv_P1, 12852
+email, 12852
+
+
+Count of Matches for Each Port/Protocol Combination
+
+Port, Protocol, Count
+
+49154, tcp, 6426
+49155, tcp, 6426
+49156, tcp, 6426
+49157, tcp, 6426
+49158, tcp, 6426
+80, tcp, 6426
+1024, tcp, 6426
+443, tcp, 6426
+23, tcp, 6426
+25, tcp, 6426
+110, tcp, 6426
+993, tcp, 6426
