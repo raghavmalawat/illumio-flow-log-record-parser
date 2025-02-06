@@ -2,12 +2,17 @@ import sys
 from collections import defaultdict
 
 class FlowLogParser:
-    DEFAULT_INPUT_FILE = './static/sample_flow_logs.txt'
-    DEFAULT_OUTPUT_FILE = './static/output.txt'
-    DEFAULT_LOOKUP_FILE = './static/lookup.csv'
     PROTOCOL_MAP = {1: 'icmp', 6: 'tcp', 17: 'udp'} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 
-    def __init__(self, input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, lookup_file=DEFAULT_LOOKUP_FILE):
+    def __init__(self, input_file,output_file, lookup_file):
+        """
+        Initializes the FlowLogParser with the specified input, output, and lookup files.
+
+        Args:
+            input_file (str): The path to the input flow log file.
+            output_file (str): The path to the output file.
+            lookup_file (str): The path to the lookup table CSV file.
+        """
         self.input_file = input_file
         self.output_file = output_file
         self.lookup_file = lookup_file
@@ -16,7 +21,18 @@ class FlowLogParser:
         self.port_protocol_counts = defaultdict(int)
 
     def read_file(self, file_path):
-        """Utility function to read a file and handle errors."""
+        """
+        Utility function to read a file and handle errors.
+
+        Args:
+            file_path (str): The path to the file to be read.
+
+        Returns:
+            file object: The opened file object.
+
+        Raises:
+            FileNotFoundError: If the specified file cannot be found.
+        """
         try:
             return open(file_path, 'r')
         except FileNotFoundError:
@@ -24,7 +40,12 @@ class FlowLogParser:
 
     def initialize(self):
         """
-        Populate lookup table (Lookup Table Format: (dstport, protocol, tag))
+        Populates the lookup table from the lookup CSV file.
+
+        The lookup table maps (dstport, protocol) tuples to tags based on the contents of the lookup file.
+
+        Raises:
+            FileNotFoundError: If the lookup file cannot be found.
         """
         with self.read_file(self.lookup_file) as f:
             for line in f:
@@ -33,9 +54,12 @@ class FlowLogParser:
 
     def parse(self):
         """
-        Parse the the flow logs from input file and return below 2 outputs
-        1. Count of Matches for Each Tag
-        2. Count of Matches for Each Port/Protocol Combination
+        Parses the flow logs from the input file.
+
+        Counts the occurrences of each tag and the number of matches for each port/protocol combination.
+
+        Raises:
+            FileNotFoundError: If the input file cannot be found.
         """
         with self.read_file(self.input_file) as f:
             for line in f:
@@ -43,12 +67,18 @@ class FlowLogParser:
                 dstport, protocol = int(fields[6]), int(fields[7])
                 key = (dstport, self.PROTOCOL_MAP[protocol])
 
-                tag = self.lookup_table.get(key, "Untagged")
+                tag = self.lookup_table.get(key, "untagged")
 
                 self.tag_counts[tag] += 1
                 self.port_protocol_counts[key] += 1
         
     def store_output(self):
+        """
+        Writes the counts of tags and port/protocol combinations to the output file.
+
+        Raises:
+            IOError: If there is an issue writing to the output file.
+        """
         try:
             with open(self.output_file, 'w') as f:
                 f.write("Count of Matches for Each Tag\n\n")

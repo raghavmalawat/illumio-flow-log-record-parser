@@ -60,7 +60,7 @@ class TestFlowLogParser(unittest.TestCase):
         with open(self.parser.output_file, 'r') as f:
             content = f.read()
             self.assertIn("Count of Matches for Each Tag", content)
-            self.assertIn("Untagged, 8", content)
+            self.assertIn("untagged, 8", content)
             self.assertIn("email, 3", content)
             self.assertNotIn("sv_P1, 3", content)
 
