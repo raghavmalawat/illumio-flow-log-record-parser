@@ -2,11 +2,11 @@ Count of Matches for Each Tag
 
 Tag, Count
 
-skipped, 1
+skipped, 2
 untagged, 7
 sv_P2, 1
 sv_P1, 2
-email, 3
+email, 2
 
 
 Count of Matches for Each Port/Protocol Combination
@@ -25,4 +25,3 @@ Port, Protocol, Count
 25, tcp, 1
 110, tcp, 1
 993, tcp, 1
-143, tcp, 1

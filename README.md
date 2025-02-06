@@ -76,8 +76,8 @@ Next set of features that can be added:
 1. The flow logs are of deafult type (v2) and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields`
 2. The input file has only the `{'icmp': 1, 'tcp': 6, 'udp': 17}` protocols
 3. This parser is not supported for custom flow log format
-4. When wrong protocol codes are passed, we don't abort the execution. Instead, we just ignore that record and log it, while incrementing the `skipped` tag count (check `output.txt`)
-
+4. When wrong protocol codes are passed `OR` When a flow log doesn't follow the default format (v2)
+    - We don't abort the execution. Instead, we just ignore that record and log it, while incrementing the `skipped` tag count (check `output.txt` and terminal output)
 ### Constraints
 
 - Input file as well as the file containing tag mappings are plain text (ascii) files  

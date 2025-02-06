@@ -64,11 +64,17 @@ class FlowLogParser:
         with self.read_file(self.input_file) as f:
             for line_number, line in enumerate(f, start=1):
                 fields = line.strip().split(' ')
+
+                if len(fields) < 14:
+                    print(f"Skipping line {line_number}: The log doesn't follow flow logs deafult type format (v2)")
+                    self.tag_counts["skipped"] += 1
+                    continue
+                
                 dstport = int(fields[6])
                 protocol_code = int(fields[7])
 
                 if protocol_code not in self.PROTOCOL_MAP.keys():
-                    print(f"Note: The protocol code '{protocol_code}' is not valid. Skipping log at line number: {line_number}")
+                    print(f"Skipping line {line_number}: The protocol code '{protocol_code}' is not valid")
                     self.tag_counts["skipped"] += 1
                     continue
 
