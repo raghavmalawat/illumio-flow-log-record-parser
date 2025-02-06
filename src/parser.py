@@ -62,10 +62,17 @@ class FlowLogParser:
             FileNotFoundError: If the input file cannot be found.
         """
         with self.read_file(self.input_file) as f:
-            for line in f:
+            for line_number, line in enumerate(f, start=1):
                 fields = line.strip().split(' ')
-                dstport, protocol = int(fields[6]), int(fields[7])
-                key = (dstport, self.PROTOCOL_MAP[protocol])
+                dstport = int(fields[6])
+                protocol_code = int(fields[7])
+
+                if protocol_code not in self.PROTOCOL_MAP.keys():
+                    print(f"Note: The protocol code '{protocol_code}' is not valid. Skipping log at line number: {line_number}")
+                    self.tag_counts["skipped"] += 1
+                    continue
+
+                key = (dstport, self.PROTOCOL_MAP[protocol_code])
 
                 tag = self.lookup_table.get(key, "untagged")
 
