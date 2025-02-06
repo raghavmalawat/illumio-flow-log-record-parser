@@ -1,5 +1,7 @@
 # FLOW LOG RECORD PARSER
 
+DEMO LINK: [Link](https://drive.google.com/file/d/17ZsrTKygAUq7h2x0vm8-k3onjcuROOdr/view?usp=sharing)
+
 ### What is a flow log record?
 A flow log record represents a network flow in a VPC. By default, each record captures a network internet protocol (IP) traffic flow (characterized by a 5-tuple on a per network interface basis) that occurs within an aggregation interval, also referred to as a capture window.
 
