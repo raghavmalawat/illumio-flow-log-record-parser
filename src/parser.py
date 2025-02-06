@@ -1,10 +1,11 @@
+import sys
 from collections import defaultdict
 
 class FlowLogParser:
-    def __init__(self):
-        self.input_file = './static/sample_flow_logs.txt'
-        self.output_file = './output.txt'
-        self.lookup_file = './static/lookup.csv'
+    def __init__(self, input_file, output_file, lookup_file):
+        self.input_file = input_file
+        self.output_file = output_file
+        self.lookup_file = lookup_file
         self.lookup_table = {}
         self.protocol_map = {'icmp': 1, 'tcp': 6, 'udp': 17} # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
         self.tag_counts = defaultdict(int)
@@ -56,10 +57,12 @@ class FlowLogParser:
 
 
 if __name__ == '__main__':
-    parser = FlowLogParser()
+    input_file = sys.argv[1] if len(sys.argv) > 1 else './static/sample_flow_logs.txt'
+    output_file = './static/output.txt'
+    lookup_file = './static/lookup.csv'
 
+    parser = FlowLogParser(input_file, output_file, lookup_file)
     parser.initialize()
     parser.parse()
-
     parser.store_output()
     

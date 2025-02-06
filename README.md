@@ -16,9 +16,19 @@ For more information, [check](https://docs.aws.amazon.com/vpc/latest/userguide/f
 Write a program that can parse a file containing [flow log data](./static/sample_flow_logs.txt) and maps each row to a `tag` based on a [lookup table](./static/lookup_table.csv) (The `dstport` and `protocol` combination decide what `tag` can be applied)
 
 ### Installation
-TBD
+- Download and install the necessary requirements 
+    ```
+    $ python3 src/parser.py             # to use the default input file ./static/sample_flow_logs.txt
+    
+    # to use the input file ./static/sample_flow_logs.txt
+    $ python3 src/parser.py ./static/sample_flow_logs.txt 
+    
+    $ python3 src/test_parser.py        # to run the tests
+    ```
 
 ### Testing
+1. Unit tests (Followed Test Driven Development)
+
 
 #### Expected Outputs
 
@@ -49,7 +59,10 @@ TBD
 
 
 ### Analysis
-TBD
+Next set of features that can be added:
+1. Pass input, output files as arguments via terminal
+2. Add support for custom flow log format
+3. Build a simple UI using Streamlit
 
 ### Assumptions
 1. The flow logs are of deafult type and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields)

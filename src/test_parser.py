@@ -3,7 +3,10 @@ from parser import FlowLogParser
 
 class TestFlowLogParser(unittest.TestCase):
     def setUp(self):
-        self.parser = FlowLogParser()
+        input_file = './static/sample_flow_logs.txt'
+        output_file = './static/output.txt'
+        lookup_file = './static/lookup.csv'
+        self.parser = FlowLogParser(input_file, output_file, lookup_file)
 
     def test_initialize(self):
         self.parser.initialize()
