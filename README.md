@@ -52,7 +52,8 @@ TBD
 TBD
 
 ### Assumptions
-TBD
+1. The flow logs are of deafult type and have all the mandatory 14 fields and [in order](https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html#flow-logs-fields)
+2. This parser is not supported for custom flow log format
 
 ### Constraints
 
